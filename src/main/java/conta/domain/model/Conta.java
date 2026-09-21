@@ -4,12 +4,16 @@ public abstract class Conta {
     private static Integer proxID = 1;
     private Integer ID;
     private Cliente cliente;
+    private Integer numero;
     private Double saldo;
+    private String senha;
 
-    public Conta(Cliente cliente, Double saldo) {
+    public Conta(Cliente cliente, Integer numero, Double saldo, String senha) {
         this.ID = proxID++;
         this.cliente = cliente;
+        this.numero = numero;
         this.saldo = saldo;
+        this.senha = senha;
     }
 
     public Integer getID() {
@@ -44,5 +48,21 @@ public abstract class Conta {
     public void transferir(Conta contaDestino, Double valor) {
         this.sacar(valor);
         contaDestino.depositar(valor);
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public Integer getNumero() {
+        return numero;
+    }
+
+    public void setNumero(Integer numero) {
+        this.numero = numero;
     }
 }

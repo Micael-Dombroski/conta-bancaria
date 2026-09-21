@@ -1,9 +1,12 @@
 package conta.domain.model;
 
+import java.util.Date;
+
 public class Cliente {
     private String nome;
     private String cpf;
     private Endereco endereco;
+    private Date nascimento;
 
     public Cliente(String nome, String cpf, Endereco endereco) {
         this.nome = nome;
@@ -33,5 +36,13 @@ public class Cliente {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public Date getNascimento() {
+        return nascimento;
+    }
+
+    public void setNascimento(Date nascimento) {
+        this.nascimento = nascimento;
     }
 }

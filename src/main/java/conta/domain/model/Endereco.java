@@ -4,19 +4,21 @@ public class Endereco {
     private String cep;
     private String logradouro;
     private String complemento;
+    private String numero;
     private String bairro;
-    private String cidade;
+    private String localidade;
     private String uf;
 
     public Endereco() {
     }
 
-    public Endereco(String cep, String logradouro, String complemento, String bairro, String cidade, String uf) {
+    public Endereco(String cep, String logradouro, String complemento, String numero, String bairro, String localidade, String uf) {
         this.cep = cep;
         this.logradouro = logradouro;
         this.complemento = complemento;
+        this.numero =
         this.bairro = bairro;
-        this.cidade = cidade;
+        this.localidade = localidade;
         this.uf = uf;
     }
 
@@ -52,12 +54,12 @@ public class Endereco {
         this.bairro = bairro;
     }
 
-    public String getCidade() {
-        return cidade;
+    public String getLocalidade() {
+        return localidade;
     }
 
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
+    public void setLocalidade(String localidade) {
+        this.localidade = localidade;
     }
 
     public String getUf() {
@@ -68,13 +70,22 @@ public class Endereco {
         this.uf = uf;
     }
 
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
     @Override
     public String toString() {
         return "CEP: " + cep + "\n" +
                 "UF: " + uf + "\n" +
-                "Cidade: " + cidade + "\n" +
+                "Cidade: " + localidade + "\n" +
                 "Bairro: " + bairro + "\n" +
                 "Logradouro: " + logradouro + "\n" +
-                "Complemento: " + complemento + "\n";
+                "Complemento: " + complemento + "\n" +
+                "Número: " + numero + "\n";
     }
 }
