@@ -7,8 +7,6 @@ public class DataBaseConnection {
     private static final String SENHA = System.getenv("DB_PASSWORD");
 
     public static Connection conectar() throws SQLException {
-        System.out.println(USUARIO);
-        System.out.println(SENHA);
         return DriverManager.getConnection(CONEXAO, USUARIO, SENHA);
     }
 }
