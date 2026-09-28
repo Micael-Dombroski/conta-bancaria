@@ -1,5 +1,7 @@
 package conta.domain.model;
 
+import java.util.Objects;
+
 public class Endereco {
     private String cep;
     private String logradouro;
@@ -16,10 +18,19 @@ public class Endereco {
         this.cep = cep;
         this.logradouro = logradouro;
         this.complemento = complemento;
-        this.numero =
+        this.numero = numero;
         this.bairro = bairro;
         this.localidade = localidade;
         this.uf = uf;
+    }
+    public Endereco(Endereco endereco) {
+        this.cep = endereco.getCep();
+        this.logradouro = endereco.getLogradouro();
+        this.complemento = endereco.getComplemento();
+        this.numero = endereco.getNumero();
+        this.bairro = endereco.getBairro();
+        this.localidade = endereco.getLocalidade();
+        this.uf = endereco.getUf();
     }
 
     public String getCep() {
@@ -87,5 +98,21 @@ public class Endereco {
                 "Logradouro: " + logradouro + "\n" +
                 "Complemento: " + complemento + "\n" +
                 "Número: " + numero + "\n";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) return true;
+        if(!(obj instanceof Endereco)) return false;
+        Endereco end = (Endereco) obj;
+        if(Objects.equals(this.cep, end.cep)
+                && Objects.equals(this.logradouro, end.logradouro)
+                && Objects.equals(this.complemento, end.complemento)
+                && Objects.equals(this.numero, end.numero)
+                && Objects.equals(this.bairro, end.bairro)
+                && Objects.equals(this.localidade, end.localidade)
+                && Objects.equals(this.uf, end.uf)
+        ) return true;
+        return false;
     }
 }
