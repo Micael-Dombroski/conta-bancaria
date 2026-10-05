@@ -1,6 +1,6 @@
-package conta.dao;
+package conta.infra.dao;
 
-import conta.database.DataBaseConnection;
+import conta.infra.database.DataBaseConnection;
 import conta.domain.model.Endereco;
 
 import java.sql.Connection;
@@ -147,19 +147,14 @@ public class EnderecoDAO {
     }
 
     public List<Endereco> consultarTodos() {
-        List<Endereco> enderecos = null;
-        try (Connection conexao = DataBaseConnection.conectar()) {
-            String sql = """
-            SELECT * FROM enderecos
-            """;
-            try (PreparedStatement ps = conexao.prepareStatement(sql)) {
-                enderecos = new ArrayList<>();
-                try (ResultSet rs = ps.executeQuery()) {
-                    while(rs.next()) enderecos.add(mapearEndereco(rs));
-                }
-            }
-        } catch(SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+        List<Endereco> enderecos = new ArrayList<>();
+        String sql = "SELECT * FROM enderecos";
+        try (Connection conexao = DataBaseConnection.conectar();
+             PreparedStatement ps = conexao.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) enderecos.add(mapearEndereco(rs));
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar enderecos", e);
         }
         return enderecos;
     }
@@ -176,24 +171,18 @@ public class EnderecoDAO {
         );
     }
 
-    static Integer getID(String cep, String numero) {
-        Integer id = -1;
-        try (Connection conexao = DataBaseConnection.conectar()) {
-            String sql = """
-            SELECT id FROM enderecos WHERE
-            cep = ? AND numero = ?
-            """;
-            try (PreparedStatement ps = conexao.prepareStatement(sql)) {
-                ps.setString(1, cep);
-                ps.setString(2, numero == null ? "N/A" : numero);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) id = rs.getInt("id");
-                }
+    static int getID(String cep, String numero) {
+        String sql = "SELECT id FROM enderecos WHERE cep = ? AND numero = ?";
+        try (Connection conexao = DataBaseConnection.conectar();
+             PreparedStatement ps = conexao.prepareStatement(sql)) {
+            ps.setString(1, cep);
+            ps.setString(2, numero == null ? "N/A" : numero);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt("id") : -1;
             }
-        } catch(SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar id do endereco", e);
         }
-        return id;
     }
 
     static Optional<Endereco> buscarPorID(Integer id) {

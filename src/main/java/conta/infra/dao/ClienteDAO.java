@@ -1,10 +1,10 @@
-package conta.dao;
+package conta.infra.dao;
 
-import conta.database.DataBaseConnection;
+import conta.infra.database.DataBaseConnection;
 import conta.domain.model.Cliente;
 import conta.domain.model.Endereco;
-import conta.security.CPFCrypto;
-import conta.security.HashCPF;
+import conta.infra.security.HashCPF;
+import conta.infra.security.CPFCrypto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -61,6 +61,10 @@ public class ClienteDAO {
 
         if (id == -1) {
             System.out.println("CPF nao cadastrado");
+            return false;
+        }
+        if(EnderecoDAO.getID(cliente.getEndereco().getCep(), cliente.getEndereco().getNumero()) == -1) {
+            System.out.println("Endereco nao encontrado");
             return false;
         }
         String sql = """

@@ -1,27 +1,30 @@
 package conta.domain.model;
 
+import java.util.Random;
+
 public abstract class Conta {
-    private static Integer proxID = 1;
-    private Integer ID;
     private Cliente cliente;
-    private Integer numero;
+    private String numero;
     private Double saldo;
     private String senha;
+    private Random random = new Random();
 
-    public Conta(Cliente cliente, Integer numero, Double saldo, String senha) {
-        this.ID = proxID++;
+    public Conta(Cliente cliente, String numero, Double saldo, String senha) {
         this.cliente = cliente;
         this.numero = numero;
         this.saldo = saldo;
         this.senha = senha;
     }
-
-    public Integer getID() {
-        return ID;
+    public Conta(Cliente cliente, Double saldo, String senha) {
+        this.numero = String.format("%010d", random.nextLong(10_000_000_000L));
+        this.cliente = cliente;
+        this.saldo = saldo;
+        this.senha = senha;
     }
-
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public Conta(Cliente cliente, String numero, Double saldo) {
+        this.cliente = cliente;
+        this.numero = numero;
+        this.saldo = saldo;
     }
 
     public Cliente getCliente() {
@@ -58,11 +61,11 @@ public abstract class Conta {
         this.senha = senha;
     }
 
-    public Integer getNumero() {
+    public String getNumero() {
         return numero;
     }
 
-    public void setNumero(Integer numero) {
+    public void setNumero(String numero) {
         this.numero = numero;
     }
 }

@@ -1,4 +1,4 @@
-package conta.database;
+package conta.infra.database;
 import java.sql.*;
 
 public class DataBaseConnection {

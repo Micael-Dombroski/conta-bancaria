@@ -1,11 +1,11 @@
-package conta.dao;
+package conta.infra.dao;
 
-import conta.database.DataBaseConnection;
+import conta.infra.database.DataBaseConnection;
 import conta.domain.model.Cliente;
 import conta.domain.model.Conta;
 import conta.domain.model.ContaCorrente;
 import conta.domain.model.ContaPoupanca;
-import conta.security.HashSenha;
+import conta.infra.security.HashSenha;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -106,55 +106,6 @@ public class ContaDAO {
         }
         return false;
     }
-
-    public boolean excluir(String numero, String senha) {
-        String sql = "SELECT id, senha_hash FROM contas WHERE numero = ?";
-        int id;
-        try (Connection conexao = DataBaseConnection.conectar();
-             PreparedStatement ps = conexao.prepareStatement(sql)) {
-
-            ps.setString(1, numero);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) {
-                    System.out.println("Conta nao cadastrada");
-                    return false;
-                }
-                if (!HashSenha.verificar(senha, rs.getString("senha_hash"))) {
-                    System.out.println("Senha incorreta");
-                    return false;
-                }
-                id = rs.getInt("id");
-            }
-            try (PreparedStatement del = conexao.prepareStatement("DELETE FROM contas WHERE id = ?")) {
-                del.setInt(1, id);
-                boolean ok = del.executeUpdate() == 1;
-                if (ok) System.out.println("Conta excluida com sucesso!");
-                return ok;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir conta", e);
-        }
-    }
-
-    public Optional<Conta> consultarPorNumeroSenha(String numero, String senha) {
-        String sql = """
-            SELECT numero, saldo, senha_hash, cliente_id, tipo
-            FROM contas WHERE numero = ?""";
-        try (Connection conexao = DataBaseConnection.conectar();
-             PreparedStatement ps = conexao.prepareStatement(sql)) {
-
-            ps.setString(1, numero);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next() && HashSenha.verificar(senha, rs.getString("senha_hash"))) {
-                    return Optional.of(mapearConta(rs));
-                } else {
-                    return Optional.empty();
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar conta", e);
-        }
-    }
     public boolean excluirPorCpf(String cpf) {
         int clienteId = ClienteDAO.getID(cpf);
         if (clienteId == -1) return false;
@@ -198,6 +149,43 @@ public class ContaDAO {
             throw new RuntimeException("Erro ao listar contas", e);
         }
         return contas;
+    }
+
+    public Optional<Conta> consultarPorNumero(String numero) {
+        String sql = "SELECT numero, saldo, cliente_id, tipo FROM contas WHERE numero = ?";
+        try (Connection c = DataBaseConnection.conectar();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, numero);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(mapearConta(rs)) : Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao consultar conta", e);
+        }
+    }
+
+    public Optional<String> consultarHashPorNumero(String numero) {
+        String sql = "SELECT senha_hash FROM contas WHERE numero = ?";
+        try (Connection c = DataBaseConnection.conectar();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, numero);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(rs.getString("senha_hash")) : Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao consultar senha", e);
+        }
+    }
+
+    public boolean excluirPorNumero(String numero) {
+        String sql = "DELETE FROM contas WHERE numero = ?";
+        try (Connection c = DataBaseConnection.conectar();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, numero);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao excluir conta", e);
+        }
     }
 
     private static Conta mapearConta(ResultSet rs) throws SQLException {
