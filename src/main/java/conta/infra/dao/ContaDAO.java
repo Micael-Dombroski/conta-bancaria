@@ -1,12 +1,10 @@
 package conta.infra.dao;
 
+import conta.domain.model.*;
 import conta.infra.database.DataBaseConnection;
-import conta.domain.model.Cliente;
-import conta.domain.model.Conta;
-import conta.domain.model.ContaCorrente;
-import conta.domain.model.ContaPoupanca;
 import conta.infra.security.HashSenha;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,13 +34,12 @@ public class ContaDAO {
 
             ps.setString(1, conta.getNumero());
             ps.setInt(2, clienteID);
-            ps.setDouble(3, conta.getSaldo());
+            ps.setBigDecimal(3, conta.getSaldo());
             ps.setString(4, HashSenha.hash(conta.getSenha()));
             ps.setInt(5, conta instanceof ContaCorrente ? 1 :
                     conta instanceof ContaPoupanca ? 2 : 0);
 
             if (ps.executeUpdate() == 1) {
-                System.out.println("Conta inserida com sucesso!");
                 return true;
             }
         } catch (SQLException e) {
@@ -66,11 +63,10 @@ public class ContaDAO {
         try (Connection conexao = DataBaseConnection.conectar();
              PreparedStatement ps = conexao.prepareStatement(sql)) {
 
-            ps.setDouble(1, conta.getSaldo());
+            ps.setBigDecimal(1, conta.getSaldo());
             ps.setInt(2, id);
 
             if (ps.executeUpdate() == 1) {
-                System.out.println("Conta atualizada com sucesso!");
                 return true;
             }
         } catch (SQLException e) {
@@ -98,7 +94,6 @@ public class ContaDAO {
             ps.setInt(2, id);
 
             if (ps.executeUpdate() == 1) {
-                System.out.println("Conta atualizada com sucesso!");
                 return true;
             }
         } catch (SQLException e) {
@@ -122,7 +117,7 @@ public class ContaDAO {
     }
 
 
-    public List<Conta> consultarPorTipo(Integer tipo) {
+    public List<Conta> consultarPorTipo(int tipo) {
         List<Conta> contas = new ArrayList<>();
         String sql = "SELECT numero, saldo, cliente_id, tipo FROM contas where tipo = ?";
         try (Connection conexao = DataBaseConnection.conectar();
@@ -191,7 +186,7 @@ public class ContaDAO {
     private static Conta mapearConta(ResultSet rs) throws SQLException {
         int tipo = rs.getInt("tipo");
         String numero = rs.getString("numero");
-        double saldo = rs.getDouble("saldo");
+        BigDecimal saldo = rs.getBigDecimal("saldo");
         Cliente cliente = ClienteDAO.buscarPorID(rs.getInt("cliente_id"))
                 .orElseThrow(() -> new IllegalStateException(
                         "Cliente inexistente para a conta " + numero));

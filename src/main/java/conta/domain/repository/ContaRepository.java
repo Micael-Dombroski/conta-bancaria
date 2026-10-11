@@ -11,7 +11,7 @@ public interface ContaRepository {
     Optional<Conta> buscarPorNumero(String numero);
     Optional<String> buscarHashSenha(String numero);
     List<Conta> listarTodas();
-    List<Conta> listarPorTipo(TipoConta tipo);
+    List<Conta> listarPorTipo(int tipo);
     boolean atualizarSaldo(Conta conta);
     boolean alterarSenha(Conta conta);
     boolean excluir(String numero);

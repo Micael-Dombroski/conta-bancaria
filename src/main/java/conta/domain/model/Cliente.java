@@ -1,6 +1,7 @@
 package conta.domain.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Cliente {
     private String nome;
@@ -8,11 +9,11 @@ public class Cliente {
     private Endereco endereco;
     private LocalDate nascimento;
 
-    public Cliente(String nome, String cpf, Endereco endereco, int ano, int mes, int dia) {
+    public Cliente(String nome, String cpf, Endereco endereco, LocalDate nascimento) {
         this.nome = nome;
         this.cpf = cpf;
         this.endereco = endereco;
-        this.nascimento = LocalDate.of(ano, mes, dia);
+        this.nascimento = nascimento;
     }
     public Cliente(Cliente cliente) {
         this.nome = cliente.getNome();
@@ -49,8 +50,8 @@ public class Cliente {
         return nascimento;
     }
 
-    public void setNascimento(int ano, int mes, int dia) {
-        this.nascimento = LocalDate.of(ano, mes, dia);
+    public void setNascimento(LocalDate nasicmento) {
+        this.nascimento = nasicmento;
     }
 
     public static String formatar(String cpf) {
@@ -62,8 +63,9 @@ public class Cliente {
 
     @Override
     public String toString() {
+        DateTimeFormatter BR = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return "CPF: " + formatar(cpf) + "\n" +
                 "Nome: " + nome + "\n" +
-                "Nascimento: " + nascimento.toString() + "\n";
+                "Nascimento: " + nascimento.format(BR) + "\n";
     }
 }

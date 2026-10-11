@@ -1,27 +1,30 @@
 package conta.domain.model;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Random;
 
 public abstract class Conta {
     private Cliente cliente;
     private String numero;
-    private Double saldo;
+    private BigDecimal saldo;
     private String senha;
-    private Random random = new Random();
 
-    public Conta(Cliente cliente, String numero, Double saldo, String senha) {
+    public Conta(Cliente cliente, String numero, BigDecimal saldo, String senha) {
         this.cliente = cliente;
         this.numero = numero;
         this.saldo = saldo;
         this.senha = senha;
     }
-    public Conta(Cliente cliente, Double saldo, String senha) {
+    public Conta(Cliente cliente, BigDecimal saldo, String senha) {
+        Random random = new Random();
         this.numero = String.format("%010d", random.nextLong(10_000_000_000L));
         this.cliente = cliente;
         this.saldo = saldo;
         this.senha = senha;
     }
-    public Conta(Cliente cliente, String numero, Double saldo) {
+    public Conta(Cliente cliente, String numero, BigDecimal saldo) {
         this.cliente = cliente;
         this.numero = numero;
         this.saldo = saldo;
@@ -31,26 +34,18 @@ public abstract class Conta {
         return cliente;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public Double getSaldo() {
+    public BigDecimal getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(Double saldo) {
-        this.saldo = saldo;
+    public void sacar(BigDecimal valor) {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Valor deve ser positivo");
+        if (valor.compareTo(saldo.add(limite())) >= 0) throw new IllegalStateException("Saldo insuficiente");
+        saldo = saldo.subtract(valor);
     }
-    public void sacar(Double valor) {
-        this.saldo -= valor;
-    }
-    public void depositar(Double valor) {
-        this.saldo += valor;
-    }
-    public void transferir(Conta contaDestino, Double valor) {
-        this.sacar(valor);
-        contaDestino.depositar(valor);
+    public void depositar(BigDecimal valor) {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Valor deve ser positivo");
+        saldo = saldo.add(valor);
     }
 
     public String getSenha() {
@@ -65,7 +60,13 @@ public abstract class Conta {
         return numero;
     }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
+    protected BigDecimal limite() {
+        return BigDecimal.ZERO;
     }
+
+    public static String formatarMoeda(BigDecimal valor) {
+        NumberFormat moeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        return moeda.format(valor);
+    }
+
 }

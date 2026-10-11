@@ -6,6 +6,8 @@ import conta.domain.model.Endereco;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +34,7 @@ public class ClienteDAOTest {
                 "Cuca Beludo",
                 CPF,
                 end,
-                1984,
-                12,
-                31
+                LocalDate.of(1984, 12, 31)
         );
         dao = new ClienteDAO();
         dao.excluir(CPF);

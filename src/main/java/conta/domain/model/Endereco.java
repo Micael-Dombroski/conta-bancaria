@@ -15,7 +15,7 @@ public class Endereco {
     }
 
     public Endereco(String cep, String logradouro, String complemento, String numero, String bairro, String localidade, String uf) {
-        this.cep = cep;
+        this.cep = normalizarCep(cep);
         this.logradouro = logradouro;
         this.complemento = complemento;
         this.numero = numero;
@@ -24,7 +24,7 @@ public class Endereco {
         this.uf = uf;
     }
     public Endereco(Endereco endereco) {
-        this.cep = endereco.getCep();
+        this.cep = normalizarCep(endereco.getCep());
         this.logradouro = endereco.getLogradouro();
         this.complemento = endereco.getComplemento();
         this.numero = endereco.getNumero();
@@ -38,7 +38,7 @@ public class Endereco {
     }
 
     public void setCep(String cep) {
-        this.cep = cep;
+        this.cep = normalizarCep(cep);
     }
 
     public String getLogradouro() {
@@ -87,6 +87,14 @@ public class Endereco {
 
     public void setNumero(String numero) {
         this.numero = numero;
+    }
+
+    public static String normalizarCep(String cep) {
+        String digitos = cep == null ? "" : cep.replaceAll("\\D", "");
+        if (digitos.length() != 8) {
+            throw new IllegalArgumentException("CEP invalido, informe 8 digitos");
+        }
+        return digitos.substring(0, 5) + "-" + digitos.substring(5);
     }
 
     @Override

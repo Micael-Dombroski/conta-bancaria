@@ -8,6 +8,9 @@ import conta.infra.security.HashSenha;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,18 +31,16 @@ public class ContaDAOTest {
             "Cuca Beludo",
             CPF,
             end,
-            1984,
-            12,
-            31
+            LocalDate.of(1984, 12, 31)
     );
     private Conta contaPoup = new ContaPoupanca(
             cliente,
-            0.0,
+            BigDecimal.ZERO,
             "Teste123"
     );
     private Conta contaCorr = new ContaCorrente(
             cliente,
-            0.0,
+            BigDecimal.ZERO,
             "Teste321"
     );
     private ContaDAO dao;
@@ -73,7 +74,7 @@ public class ContaDAOTest {
 
         assertInstanceOf(ContaPoupanca.class, lida);
         assertEquals(contaPoup.getNumero(), lida.getNumero());
-        assertEquals(0.0, lida.getSaldo(), 0.001);
+        assertEquals(new BigDecimal("0.00"), lida.getSaldo());
     }
 
     @Test
@@ -88,10 +89,10 @@ public class ContaDAOTest {
 
     @Test
     void editarSaldoContaComSucesso() {
-        contaCorr.depositar(1000.00);
+        contaCorr.depositar(new BigDecimal("1000.00"));
         assertTrue(dao.atualizarSaldo(contaCorr), "Nao foi possivel editar o saldo da Conta");
         Conta lida = dao.consultarPorNumero(contaCorr.getNumero()).orElseThrow();
-        assertEquals(1000.00, lida.getSaldo(), 0.001);
+        assertEquals(new BigDecimal("1000.00"), lida.getSaldo());
     }
 
     @Test
@@ -129,7 +130,7 @@ public class ContaDAOTest {
 
     @Test
     void consultarContasCorrente() {
-        List<Conta> contas = dao.consultarPorTipo(1);
+        List<Conta> contas = dao.consultarPorTipo(TipoConta.CORRENTE.getCodigo());
 
         assertTrue(contas.stream().anyMatch(c -> c.getNumero().equals(contaCorr.getNumero())),
                 "A conta corrente inserida deveria estar na lista");
@@ -139,7 +140,7 @@ public class ContaDAOTest {
 
     @Test
     void consultarContasPoupanca() {
-        List<Conta> contas = dao.consultarPorTipo(2);
+        List<Conta> contas = dao.consultarPorTipo(TipoConta.POUPANCA.getCodigo());
 
         assertTrue(contas.stream().anyMatch(c -> c.getNumero().equals(contaPoup.getNumero())),
                 "A conta poupança inserida deveria estar na lista");

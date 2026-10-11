@@ -36,7 +36,7 @@ public class EnderecoDAO {
             try(PreparedStatement ps = conexao.prepareStatement(sql)) {
                 ps.setString(1, endereco.getCep());
                 ps.setString(2, endereco.getLogradouro());
-                ps.setString(3, endereco.getComplemento());
+                ps.setString(3, endereco.getComplemento().isBlank() || endereco.getComplemento() == null? "N/A" : endereco.getComplemento());
                 ps.setString(4, endereco.getNumero() == null ?
                         "N/A" : endereco.getNumero());
                 ps.setString(5, endereco.getBairro());
@@ -44,7 +44,6 @@ public class EnderecoDAO {
                 ps.setString(7, endereco.getUf().toUpperCase());
 
                 if(ps.executeUpdate() == 1) {
-                    System.out.println("Endereco inserido com sucesso!");
                     return true;
                 }
             }
@@ -65,32 +64,35 @@ public class EnderecoDAO {
             System.out.println("Endereco ja cadastrado");
             return false;
         }
-        String sql = """
-        UPDATE enderecos SET cep = ?, logradouro = ?, complemento = ?, numero = ?,
-            bairro = ?, cidade = ?, uf = ?, data_modificacao = CURRENT_TIMESTAMP
-        WHERE id = ?""";
-        try (Connection conexao = DataBaseConnection.conectar();
-             PreparedStatement ps = conexao.prepareStatement(sql)) {
-            ps.setString(1, novo.getCep());
-            ps.setString(2, novo.getLogradouro());
-            ps.setString(3, novo.getComplemento());
-            ps.setString(4, novo.getNumero() == null ? "N/A" : novo.getNumero());
-            ps.setString(5, novo.getBairro());
-            ps.setString(6, novo.getLocalidade());
-            ps.setString(7, novo.getUf().toUpperCase());
-            ps.setInt(8, idAntigo);
-            if (ps.executeUpdate() == 1) {
-                System.out.println("Endereco atualizado com sucesso!");
-                return true;
+        if(antigo.getNumero() != "N/A") {
+            String sql = """
+            UPDATE enderecos SET cep = ?, logradouro = ?, complemento = ?, numero = ?,
+                bairro = ?, cidade = ?, uf = ?, data_modificacao = CURRENT_TIMESTAMP
+            WHERE id = ?""";
+            try (Connection conexao = DataBaseConnection.conectar();
+                 PreparedStatement ps = conexao.prepareStatement(sql)) {
+                ps.setString(1, novo.getCep());
+                ps.setString(2, novo.getLogradouro());
+                ps.setString(3, novo.getComplemento().isBlank() || novo.getComplemento() == null? "N/A" : novo.getComplemento());
+                ps.setString(4, novo.getNumero() == null ? "N/A" : novo.getNumero());
+                ps.setString(5, novo.getBairro());
+                ps.setString(6, novo.getLocalidade());
+                ps.setString(7, novo.getUf().toUpperCase());
+                ps.setInt(8, idAntigo);
+                if (ps.executeUpdate() == 1) {
+                    return true;
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Erro ao atualizar endereco", e);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar endereco", e);
+        } else {
+            adicionar(novo);
         }
         return false;
     }
 
     public boolean excluir(String cep, String numero) {
-        Integer id = getID(cep, numero);
+        int id = getID(cep, numero);
         if (id == -1) {
             System.out.println("Endereco nao encontrado");
             return false;
@@ -100,7 +102,6 @@ public class EnderecoDAO {
             try (PreparedStatement ps = conexao.prepareStatement(sql)) {
                 ps.setInt(1, id);
                 if (ps.executeUpdate() == 1) {
-                    System.out.println("Endereco excluido com sucesso!");
                     return true;
                 }
             }

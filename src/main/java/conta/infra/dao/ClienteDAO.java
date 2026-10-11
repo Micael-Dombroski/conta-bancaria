@@ -46,7 +46,6 @@ public class ClienteDAO {
                     cliente.getEndereco().getNumero()));
 
             if (ps.executeUpdate() == 1) {
-                System.out.println("Cliente inserido com sucesso!");
                 return true;
             }
         } catch (SQLException e) {
@@ -82,7 +81,6 @@ public class ClienteDAO {
             ps.setInt(4, id);
 
             if (ps.executeUpdate() == 1) {
-                System.out.println("Cliente atualizado com sucesso!");
                 return true;
             }
         } catch (SQLException e) {
@@ -98,17 +96,16 @@ public class ClienteDAO {
             System.out.println("Cliente nao cadastrado");
             return false;
         }
-        String sql = "DELETE FROM clientes WHERE id = ?";
-        try (Connection conexao = DataBaseConnection.conectar();
-             PreparedStatement ps = conexao.prepareStatement(sql)) {
-
-            ps.setInt(1, id);
-            if (ps.executeUpdate() == 1) {
-                System.out.println("Cliente excluido com sucesso!");
-                return true;
+        try (Connection conexao = DataBaseConnection.conectar()) {
+            String sql = "DELETE FROM clientes WHERE id = ?";
+            try (PreparedStatement ps = conexao.prepareStatement(sql)) {
+                ps.setInt(1, id);
+                if (ps.executeUpdate() == 1) {
+                    return true;
+                }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir cliente", e);
+        } catch(SQLException e) {
+            System.out.println("Error: " + e.getMessage());
         }
         return false;
     }
@@ -153,9 +150,7 @@ public class ClienteDAO {
                 rs.getString("nome"),
                 CPFCrypto.descriptografar(rs.getString("cpf_crypt")),
                 end,
-                nasc.getYear(),
-                nasc.getMonthValue(),
-                nasc.getDayOfMonth()
+                nasc
         );
     }
 

@@ -14,10 +14,7 @@ public class ViaCepClient implements BuscadorCep {
 
     @Override
     public Optional<Endereco> buscar(String cep) throws BuscaCepException {
-        String digitos = cep == null ? "" : cep.replaceAll("\\D", "");
-        if (digitos.length() != 8) {
-            throw new IllegalArgumentException("CEP deve ter 8 digitos");
-        }
+        String digitos = Endereco.normalizarCep(cep);
         String url = "https://viacep.com.br/ws/" + digitos + "/json/";
         try {
             String json = Request.Get(url)
@@ -31,7 +28,7 @@ public class ViaCepClient implements BuscadorCep {
             if (o.has("erro")) return Optional.empty();
 
             return Optional.of(new Endereco(
-                    digitos.substring(0, 5) + "-" + digitos.substring(5),
+                    digitos,
                     texto(o, "logradouro"),
                     texto(o, "complemento"),
                     null,                       // numero: o usuario informa
