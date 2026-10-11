@@ -1,6 +1,7 @@
-package conta.domain.repository;
+package conta.infra.repository;
 
 import conta.domain.model.Endereco;
+import conta.domain.repository.EnderecoRepository;
 import conta.infra.dao.EnderecoDAO;
 
 import java.util.List;
