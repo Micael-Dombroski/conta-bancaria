@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClienteDAOTest {
-    private static final String CPF = "275.626.790-29";
+    private static final String CPF = "27562679029";
     private Endereco end;
     private Cliente cliente;
     private ClienteDAO dao;
@@ -47,9 +47,13 @@ public class ClienteDAOTest {
     }
 
     @Test
-    void adicionarClienteComSucesso() throws Exception {
-        assertTrue(() -> dao.adicionar(cliente),
-                "Nao foi possivel adicionar o cliente");
+    void adicionarClienteComSucesso() {
+        assertTrue(dao.consultarPorCPF(CPF).isPresent());
+    }
+
+    @Test
+    void adicionarClienteDuplicadoRetornaFalse() {
+        assertFalse(dao.adicionar(cliente));
     }
 
     @Test
@@ -63,16 +67,16 @@ public class ClienteDAOTest {
 
     @Test
     void consultarClienteComSucesso() {
-        Optional<Cliente> retorno = dao.consultarPorCPF("275.626.790-29");
+        Optional<Cliente> retorno = dao.consultarPorCPF("27562679029");
         //System.out.println(retorno);
         assertTrue(retorno.isPresent(), "O cliente retornado pelo CPF nao deveria ser nulo");
     }
 
     @Test
     void excluirClienteComSucesso() throws Exception {
-        assertTrue(() -> dao.excluir("275.626.790-29"),
+        assertTrue(() -> dao.excluir("27562679029"),
                 "Nao foi possivel excluir o cliente");
-        Optional<Cliente> retorno = dao.consultarPorCPF("275.626.790-29");
+        Optional<Cliente> retorno = dao.consultarPorCPF("27562679029");
         assertFalse(retorno.isPresent(), "Nao deveria ser possivel consultar o cliente excluido");
     }
 

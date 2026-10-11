@@ -68,5 +68,4 @@ public abstract class Conta {
         NumberFormat moeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
         return moeda.format(valor);
     }
-
 }
