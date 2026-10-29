@@ -1,12 +1,5 @@
 package conta.ui;
 
-import conta.domain.repository.ClienteRepositoryImpl;
-import conta.domain.repository.ContaRepositoryImpl;
-import conta.domain.repository.EnderecoRepositoryImpl;
-import conta.domain.service.ClienteService;
-import conta.domain.service.ContaService;
-import conta.domain.service.EnderecoService;
-
 import java.util.Scanner;
 
 public class ContaBancariaUI {

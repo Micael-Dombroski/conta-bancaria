@@ -2,8 +2,8 @@ package conta.ui;
 
 import conta.domain.model.Cliente;
 import conta.domain.model.Endereco;
-import conta.domain.repository.ClienteRepositoryImpl;
-import conta.domain.repository.EnderecoRepositoryImpl;
+import conta.infra.repository.ClienteRepositoryImpl;
+import conta.infra.repository.EnderecoRepositoryImpl;
 import conta.domain.service.ClienteService;
 
 import java.time.LocalDate;
@@ -62,6 +62,10 @@ public class ClienteUI {
         System.out.print("\nInforme o CPF (so numeros): ");
         String cpf = scan.nextLine();
         if(!validarTamanhoCPF(cpf)) return;
+        if(!cpf.matches("\\d+")) {
+            System.out.println("\nO CPF deve conter apenas numeros\n");
+            return;
+        }
         System.out.print("\nInforme o Nome: ");
         String nome = scan.nextLine();
         LocalDate nascimento = lerDataNascimento();

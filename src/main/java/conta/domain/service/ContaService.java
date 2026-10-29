@@ -1,9 +1,7 @@
 package conta.domain.service;
 
 import conta.domain.model.Conta;
-import conta.domain.model.TipoConta;
 import conta.domain.repository.ContaRepository;
-import conta.domain.repository.ContaRepositoryImpl;
 import conta.infra.security.HashSenha;
 
 import java.math.BigDecimal;

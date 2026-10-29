@@ -1,6 +1,7 @@
-package conta.domain.repository;
+package conta.infra.repository;
 
 import conta.domain.model.Cliente;
+import conta.domain.repository.ClienteRepository;
 import conta.infra.dao.ClienteDAO;
 
 import java.util.List;

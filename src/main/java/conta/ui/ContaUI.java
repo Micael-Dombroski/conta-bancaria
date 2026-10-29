@@ -1,8 +1,8 @@
 package conta.ui;
 
 import conta.domain.model.*;
-import conta.domain.repository.ClienteRepositoryImpl;
-import conta.domain.repository.ContaRepositoryImpl;
+import conta.infra.repository.ClienteRepositoryImpl;
+import conta.infra.repository.ContaRepositoryImpl;
 import conta.domain.service.ContaService;
 
 import java.math.BigDecimal;

@@ -2,7 +2,7 @@ package conta.ui;
 
 import conta.api.ViaCepClient;
 import conta.domain.model.Endereco;
-import conta.domain.repository.EnderecoRepositoryImpl;
+import conta.infra.repository.EnderecoRepositoryImpl;
 import conta.domain.service.EnderecoService;
 
 import java.util.Optional;
